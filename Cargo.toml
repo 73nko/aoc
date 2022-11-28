@@ -2,7 +2,7 @@
 members = ["src/cli", "puzzles/*"]
 name = "aoc"
 version = "0.1.0"
-description = "Advent of Code Solutions"
+description = "Advent of Code Solutions and CLI to autogenerate days"
 authors = ["Alex Pérez <apramos89@gmail.com>"]
 categories = ["advent-of-code"]
 edition = "2021"
