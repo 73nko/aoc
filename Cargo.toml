@@ -1,0 +1,17 @@
+[workspace]
+members = ["src/cli"]
+name = "aoc"
+version = "0.1.0"
+description = "Advent of Code Solutions"
+authors = ["Alex Pérez <apramos89@gmail.com>"]
+categories = ["advent-of-code"]
+edition = "2021"
+repository = "https://github.com/73nko/aoc"
+readme = "README.md"
+license = "MIT"
+
+[woekspace.dependencies]
+anyhow = { version = "1" }
+itertools = { version = "0.10" }
+regex = { version = "1" }
+once_cell = { version = "1.9" }
