@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .arg_required_else_help(true)
         .about("Aoc allows you to automatize the generation of a new advent of code boilerplate")
         .subcommand(
-            Command::new("puzzle")
+            Command::new("gen")
                 .about("introduce the day and the year of the aoc puzzle")
                 .arg(
                     Arg::new("day")
@@ -36,7 +36,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .get_matches();
 
-    if let Some(matches) = matches.subcommand_matches("puzzle") {
+    if let Some(matches) = matches.subcommand_matches("gen") {
         let day = matches.get_one::<String>("day").unwrap_or(&default_day);
         let year = matches.get_one::<String>("year").unwrap_or(&default_year);
 

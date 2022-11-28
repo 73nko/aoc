@@ -19,10 +19,10 @@ fn generate_template() -> String {
     r#"
 use anyhow::Result;
 
-fn part1(input: &Vec<&str>) -> Result<usize> {
+fn part1(input: &str) -> Result<usize> {
     Ok(0)
 }
-fn part2(input: &Vec<&str>) -> Result<usize> {
+fn part2(input: &str) -> Result<usize> {
     Ok(0)
 }
 
@@ -41,7 +41,7 @@ mod tests {
 }
 
 fn main() -> Result<()> {
-    let input: Vec<&str> = include_str!("../input.txt").lines().collect();
+    let input = include_str!("../input.txt");
     println!("PART 1: {:?}", part1(&input)?);
     // println!("PART 2: {:?}", part2(&input)?);
     Ok(())
@@ -131,12 +131,14 @@ pub fn generate_puzzle_app(day: &str, year: &str) -> Result<(), Error> {
     let cargo_file = format!("{}/Cargo.toml", project_path);
     let template = generate_template();
 
+    // Create new cargo App
     Command::new("cargo")
         .arg("new")
         .arg(&project_path)
         .output()
         .expect("failed to create new app");
 
+    // Remove the git configuration of the cargo created
     Command::new("rm")
         .arg("-rf")
         .arg(format!("{}/.git", project_path))
