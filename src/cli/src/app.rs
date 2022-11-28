@@ -137,6 +137,12 @@ pub fn generate_puzzle_app(day: &str, year: &str) -> Result<(), Error> {
         .output()
         .expect("failed to create new app");
 
+    Command::new("rm")
+        .arg("-rf")
+        .arg(format!("{}/.git", project_path))
+        .output()
+        .expect("Something fails removing git folder");
+
     // Create new puzzle of the day file and fill it with the template
     let mut puzzle_file = OpenOptions::new()
         .write(true)
