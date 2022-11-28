@@ -1,5 +1,5 @@
 [workspace]
-members = ["src/cli"]
+members = ["src/cli", "puzzles/*"]
 name = "aoc"
 version = "0.1.0"
 description = "Advent of Code Solutions"

@@ -1,4 +1,5 @@
-use std::fs::{create_dir_all, read_to_string, File, OpenOptions};
+use std::fs::{read_to_string, OpenOptions};
+use std::process::Command;
 
 use std::io::Error;
 use std::io::Write;
@@ -14,40 +15,39 @@ const SESSION_COOKIE_FILE: &str = ".adventofcode.session";
 const RELEASE_TIMEZONE_OFFSET: i32 = -5 * 3600;
 const DECEMBER: u32 = 12;
 
-fn generate_template(input_filename: &str) -> String {
-    format!(
-        r#"
+fn generate_template() -> String {
+    r#"
 use anyhow::Result;
 
-fn part1(input: &str) -> Result<usize> {{
+fn part1(input: &Vec<&str>) -> Result<usize> {
     Ok(0)
-}}
-fn part2(input: &str) -> Result<usize> {{
+}
+fn part2(input: &Vec<&str>) -> Result<usize> {
     Ok(0)
-}}
+}
 
 #[cfg(test)]
-mod tests {{
+mod tests {
     use super::*;
     const INPUT: &'static str = "";
     #[test]
-    fn test_part1() {{
+    fn test_part1() {
         assert_eq!(part1(INPUT).unwrap(), 0);
-    }}
+    }
     #[test]
-    fn test_part2() {{
+    fn test_part2() {
         assert_eq!(part2(INPUT).unwrap(), 0);
-    }}
-}}
+    }
+}
 
-fn main() -> Result<()> {{
-    let input = include_str!("./inputs/{input_filename}").trim_end();
-    println!("{{:?}}", part1(input)?);
-    // println!("{{:?}}", part2(input)?);
+fn main() -> Result<()> {
+    let input: Vec<&str> = include_str!("../input.txt").lines().collect();
+    println!("PART 1: {:?}", part1(&input)?);
+    // println!("PART 2: {:?}", part2(&input)?);
     Ok(())
-}}
+}
     "#
-    )
+    .to_string()
 }
 
 fn read_session_cookie() -> String {
@@ -101,13 +101,17 @@ fn build_client(session_cookie: &str, content_type: &str) -> Result<Client, Stri
 
 fn download_input(day: &str, year: &str) -> Result<String, String> {
     let session = read_session_cookie();
+    let formatted_day = day.parse::<i32>().unwrap();
     if !puzzle_unlocked(day, year)? {
         return Err(format!("Puzzle {} of {} is still locked.", day, year));
     }
 
     eprintln!("Downloading input for day {}, {}...", day, year);
 
-    let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
+    let url = format!(
+        "https://adventofcode.com/{}/day/{}/input",
+        year, formatted_day
+    );
     let content_type = "text/plain";
     let puzzle_input = build_client(&session, content_type)?
         .get(&url)
@@ -120,33 +124,24 @@ fn download_input(day: &str, year: &str) -> Result<String, String> {
 }
 
 pub fn generate_puzzle_app(day: &str, year: &str) -> Result<(), Error> {
-    let puzzles_path = "src/bin";
-    let inputs_path = "src/bin/inputs";
-    let mod_file_path = format!("{}/mod", puzzles_path);
-    let puzzle_app = format!("{}/{}_{}", puzzles_path, year, day);
-    let input_filename = format!("{}_{}_input.txt", year, day);
+    let puzzle_app = format!("puzzle_{}_{}", year, day);
+    let project_path = format!("./puzzles/{}", puzzle_app);
+    let main_file = format!("{}/src/main.rs", project_path);
+    let input_file = format!("{}/input.txt", project_path);
+    let cargo_file = format!("{}/Cargo.toml", project_path);
+    let template = generate_template();
 
-    // create bin directory if it doesn't exists
-    create_dir_all(puzzles_path).unwrap();
-    create_dir_all(inputs_path).unwrap();
-
-    // Create mod file and write new day functions module
-    let mut mod_file = OpenOptions::new()
-        .create(true)
-        .write(true)
-        .append(true)
-        .open(format!("{}.rs", mod_file_path))
-        .expect("Unable to open mod file");
-    mod_file.write_all(format!("mod {}_{}\r", year, day).as_bytes())?;
+    Command::new("cargo")
+        .arg("new")
+        .arg(&project_path)
+        .output()
+        .expect("failed to create new app");
 
     // Create new puzzle of the day file and fill it with the template
     let mut puzzle_file = OpenOptions::new()
-        .create(true)
         .write(true)
-        .open(format!("{}.rs", puzzle_app))
+        .open(&main_file)
         .expect("Unable to open add file");
-
-    let template = generate_template(&input_filename);
     puzzle_file.write_all(template.as_bytes())?;
 
     // Create and download the input file
@@ -154,10 +149,19 @@ pub fn generate_puzzle_app(day: &str, year: &str) -> Result<(), Error> {
     let mut puzzle_input_file = OpenOptions::new()
         .create(true)
         .write(true)
-        .open(format!("{}/{}", inputs_path, input_filename))
+        .open(&input_file)
         .expect("Error creating input file");
 
     puzzle_input_file.write_all(puzzle_input.as_bytes())?;
+
+    // Add anyhow dependency
+    let mut cargo_file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open(&cargo_file)
+        .expect("Error creating input file");
+
+    cargo_file.write_all("anyhow={ version = \"1.0.66\"}".as_bytes())?;
 
     Ok(())
 }
