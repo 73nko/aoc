@@ -1,15 +1,15 @@
 use anyhow::Result;
 use outcome::Outcome;
-use play::Play;
+use play::{Move, Play};
 
 mod outcome;
 mod play;
 
-fn solve(input: &[(Play, Play)]) -> Result<usize> {
+fn solve(input: &[Move]) -> Result<usize> {
     Ok(input.iter().map(Outcome::get_score).sum())
 }
 
-fn prepare_input_a(input: &str) -> Vec<(Play, Play)> {
+fn prepare_input_a(input: &str) -> Vec<Move> {
     input
         .lines()
         .map(|l| l.trim().split_once(' ').unwrap())
@@ -17,7 +17,7 @@ fn prepare_input_a(input: &str) -> Vec<(Play, Play)> {
         .collect()
 }
 
-fn prepare_input_b(input: &str) -> Vec<(Play, Play)> {
+fn prepare_input_b(input: &str) -> Vec<Move> {
     input
         .lines()
         .map(|l| l.trim().split_once(' ').unwrap())
