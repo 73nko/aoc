@@ -700,14 +700,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "puzzle_2021_01"
+name = "puzzle_2022_1"
 version = "0.1.0"
 dependencies = [
  "anyhow",
 ]
 
 [[package]]
-name = "puzzle_2022_1"
+name = "puzzle_2022_2"
 version = "0.1.0"
 dependencies = [
  "anyhow",
