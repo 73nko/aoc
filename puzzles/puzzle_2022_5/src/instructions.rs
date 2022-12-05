@@ -1,16 +1,13 @@
-use std::str::FromStr;
-
 use itertools::Itertools;
 use regex::Regex;
+use std::str::FromStr;
 
-#[derive(Debug)]
 pub struct Move {
     pub count: i32,
     pub from: usize,
     pub to: usize,
 }
 
-#[derive(Debug)]
 pub struct Instructions {
     pub stacks: Vec<Vec<char>>,
     pub moves: Vec<Move>,
@@ -23,22 +20,25 @@ impl Instructions {
             .rev()
             .skip(1)
             .fold(Vec::new(), |stacks, line| {
-                line.chars().chunks(4).into_iter().enumerate().fold(
-                    stacks,
-                    |mut stacks, (stack_idx, mut char_chunk)| {
+                line.chars()
+                    .chunks(4)
+                    .into_iter()
+                    .filter_map(|mut chunk| chunk.nth(1))
+                    .enumerate()
+                    .fold(stacks, |mut stacks, (stack_idx, char_chunk)| {
+                        // Create a new stack if it doesn't exist
                         if stacks.len() <= stack_idx {
                             stacks.push(Vec::new());
                         }
 
-                        let stack = stacks.get_mut(stack_idx);
-                        match (char_chunk.nth(1), stack) {
-                            (Some(ch), Some(stack)) if ch != ' ' => stack.push(ch),
-                            _ => (),
+                        if !char_chunk.is_whitespace() {
+                            // Push the chars onto the stack
+                            let stack = stacks.get_mut(stack_idx).unwrap();
+                            stack.push(char_chunk);
                         }
 
                         stacks
-                    },
-                )
+                    })
             })
     }
 
