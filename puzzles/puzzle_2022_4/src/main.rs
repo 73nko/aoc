@@ -1,5 +1,4 @@
 use anyhow::Result;
-
 use std::str::FromStr;
 
 // Define a struct to represent a range of integers

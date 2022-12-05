@@ -17,36 +17,31 @@ const DECEMBER: u32 = 12;
 
 fn generate_template() -> String {
     r#"
-use anyhow::Result;
-
-fn part1(input: &str) -> Result<usize> {
-    Ok(0)
+fn part1(input: &str) -> usize {
+    0
 }
-fn part2(input: &str) -> Result<usize> {
-    Ok(0)
+fn part2(input: &str) -> usize {
+    0
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    const INPUT: &'static str = "";
+    const INPUT: &str = r#""\#;
     #[test]
     fn test_part1() {
-        assert_eq!(part1(INPUT).unwrap(), 0);
+        assert_eq!(part1(INPUT), 0);
     }
     #[test]
     fn test_part2() {
-        assert_eq!(part2(INPUT).unwrap(), 0);
+        assert_eq!(part2(INPUT), 0);
     }
-}
 
-fn main() -> Result<()> {
+fn main() {
     let input = include_str!("../input.txt");
-    println!("PART 1: {:?}", part1(&input)?);
+    println!("PART 1: {:?}", part1(input));
     // println!("PART 2: {:?}", part2(&input)?);
-    Ok(())
-}
-    "#
+}"#
     .to_string()
 }
 
