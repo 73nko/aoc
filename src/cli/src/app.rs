@@ -36,11 +36,12 @@ mod tests {
     fn test_part2() {
         assert_eq!(part2(INPUT), 0);
     }
+}
 
 fn main() {
     let input = include_str!("../input.txt");
     println!("PART 1: {:?}", part1(input));
-    // println!("PART 2: {:?}", part2(&input)?);
+    // println!("PART 2: {:?}", part2(input));
 }"#
     .to_string()
 }
